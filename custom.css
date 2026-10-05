@@ -60,12 +60,19 @@
 }
 
 .composite.title.has-actions {
-  border-bottom: 1px solid oklch(0.3442 0.0075 264.47 / 25%) !important;
+  /* Drawn as a shadow, not a border, so the title keeps the exact height
+     VS Code lays it out with and doesn't push the sidebar content down. */
+  border-bottom: none !important;
+  box-shadow: inset 0 -1px 0 oklch(0.3442 0.0075 264.47 / 25%) !important;
 }
 
 .composite.has-composite-bar.header-or-footer.footer {
-  border-top: 1px solid oklch(0.3442 0.0075 264.47 / 25%) !important;
-  box-shadow: 0px -4px 16px oklch(0 0 0 / 24%) !important;
+  /* Same idea: a real border makes the footer 1px taller than VS Code
+     expects, and since it sits above the content (z-index) it overlaps
+     the bottom of the sidebar content, e.g. the last terminal row. */
+  border-top: none !important;
+  box-shadow: inset 0 1px 0 oklch(0.3442 0.0075 264.47 / 25%),
+    0px -4px 16px oklch(0 0 0 / 24%) !important;
   position: relative;
   z-index: 1;
 }
@@ -155,5 +162,14 @@
 }
 
 .editor-container {
-  padding: 20px 0px;
+  padding: 20px 0px 0px 0px;
+  box-sizing: border-box;
+}
+
+/* Terminal in the sidebar: reserve space above the footer so the last rows
+   (mode line, prompt) aren't cut off. VS Code subtracts the wrapper's padding
+   when it calculates how many rows fit, so this stays layout-aware. */
+.part.sidebar .integrated-terminal .terminal-wrapper,
+.part.auxiliarybar .integrated-terminal .terminal-wrapper {
+  padding-bottom: 24px !important;
 }
